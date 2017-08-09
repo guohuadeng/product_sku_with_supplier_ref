@@ -32,9 +32,11 @@
     'author': "Humanytek",
     'website': "http://www.humanytek.com",
     'category': 'Purchases',
-    'version': '0.1.0',
+    'version': '1.1.0',
     'depends': ['product', ],
     'data': [
+        'data/ir_config_parameter.xml',
+        'views/product_view.xml',
     ],
     'demo': [
     ],

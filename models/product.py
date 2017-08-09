@@ -21,16 +21,12 @@
 ###############################################################################
 
 from openerp import api, models
+from openerp.exceptions import ValidationError
+from openerp.tools.translate import _
 
 
 class ProductProduct(models.Model):
     _inherit = "product.product"
-
-    _sql_constraints = [
-        ('uniq_default_code',
-            'unique(default_code)',
-            "The internal reference must be unique!"),
-    ]
 
     @api.model
     def _get_default_code(self, supplier):
@@ -41,12 +37,24 @@ class ProductProduct(models.Model):
             ('default_code', 'like', '%s-%%' % (supplier_ref))
             ])
 
+        IrConfigParameter = self.env['ir.config_parameter']
+        exists_parameter_number_digits = IrConfigParameter.search([
+            ('key', '=', 'product_sku_number_digits')
+            ])
+        if exists_parameter_number_digits:
+            number_digits = int(exists_parameter_number_digits[0].value)
+        else:
+            raise ValidationError(_(
+                'The system parameter product_sku_number_digits	does not exist'))
+
         if not products_supplier:
-            sequence = '000001'
+            sequence = '1'.zfill(number_digits)
         else:
             current_max_sequence = max(
                 products_supplier.mapped('default_code'))
-            sequence = str(int(current_max_sequence[-6:]) + 1).zfill(6)
+            sequence = str(int(
+                current_max_sequence[-number_digits:]) + 1) \
+                .zfill(number_digits)
 
         default_code = '%s-%s' % (supplier_ref, sequence)
         return default_code
@@ -57,11 +65,14 @@ class ProductProduct(models.Model):
         if vals.get('product_tmpl_id'):
             ProductTemplate = self.env['product.template']
             product_template = ProductTemplate.browse(vals['product_tmpl_id'])
-
-            if product_template.seller_ids:
-                supplier = product_template.seller_ids[0].name
-                if supplier.ref:
-                    vals['default_code'] = \
-                        self._get_default_code(supplier)
+            if not product_template.product_variant_ids:
+                if product_template.seller_ids:
+                    supplier = product_template.seller_ids[0].name
+                    if supplier.ref:
+                        vals['default_code'] = \
+                            self._get_default_code(supplier)
+            else:
+                vals['default_code'] = product_template \
+                    .product_variant_ids[0].default_code
 
         return super(ProductProduct, self).create(vals)
