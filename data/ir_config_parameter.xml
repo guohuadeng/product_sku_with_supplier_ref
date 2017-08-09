@@ -1,0 +1,9 @@
+<?xml version="1.0"?>
+<openerp>
+    <data noupdate="1">
+    	<record id="config_product_sku_number_digits" model="ir.config_parameter">
+            <field name="key">product_sku_number_digits</field>
+            <field name="value">3</field>
+        </record>
+    </data>
+</openerp>
