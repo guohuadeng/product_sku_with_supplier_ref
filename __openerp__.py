@@ -35,6 +35,7 @@
     'version': '0.1.0',
     'depends': ['product', ],
     'data': [
+        'views/product_view.xml',
     ],
     'demo': [
     ],

@@ -21,16 +21,10 @@
 ###############################################################################
 
 from openerp import api, models
-
-
+import logging
+_logger = logging.getLogger(__name__)
 class ProductProduct(models.Model):
     _inherit = "product.product"
-
-    _sql_constraints = [
-        ('uniq_default_code',
-            'unique(default_code)',
-            "The internal reference must be unique!"),
-    ]
 
     @api.model
     def _get_default_code(self, supplier):
@@ -57,11 +51,14 @@ class ProductProduct(models.Model):
         if vals.get('product_tmpl_id'):
             ProductTemplate = self.env['product.template']
             product_template = ProductTemplate.browse(vals['product_tmpl_id'])
-
-            if product_template.seller_ids:
-                supplier = product_template.seller_ids[0].name
-                if supplier.ref:
-                    vals['default_code'] = \
-                        self._get_default_code(supplier)
+            if not product_template.product_variant_ids:
+                if product_template.seller_ids:
+                    supplier = product_template.seller_ids[0].name
+                    if supplier.ref:
+                        vals['default_code'] = \
+                            self._get_default_code(supplier)
+            else:
+                vals['default_code'] = product_template \
+                    .product_variant_ids[0].default_code
 
         return super(ProductProduct, self).create(vals)
