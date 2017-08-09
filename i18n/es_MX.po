@@ -1,0 +1,34 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+# 	* product_sku_with_supplier_ref
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 9.0e\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2017-08-09 21:17+0000\n"
+"PO-Revision-Date: 2017-08-09 17:19-0400\n"
+"Last-Translator: Manuel Marquez <buzondemam@gmail.com>\n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: \n"
+"Language: es_MX\n"
+"X-Generator: Poedit 1.6.10\n"
+
+#. module: product_sku_with_supplier_ref
+#: model:ir.model,name:product_sku_with_supplier_ref.model_product_product
+msgid "Product"
+msgstr "Producto"
+
+#. module: product_sku_with_supplier_ref
+#: model:ir.model,name:product_sku_with_supplier_ref.model_product_template
+msgid "Product Template"
+msgstr "Plantilla de producto"
+
+#. module: product_sku_with_supplier_ref
+#: code:addons/product_sku_with_supplier_ref/models/product.py:47
+#, python-format
+msgid "The system parameter product_sku_number_digits\tdoes not exist"
+msgstr "El parametro de sistema \"product_sku_number_digits\" no existe."

@@ -21,8 +21,10 @@
 ###############################################################################
 
 from openerp import api, models
-import logging
-_logger = logging.getLogger(__name__)
+from openerp.exceptions import ValidationError
+from openerp.tools.translate import _
+
+
 class ProductProduct(models.Model):
     _inherit = "product.product"
 
@@ -35,12 +37,24 @@ class ProductProduct(models.Model):
             ('default_code', 'like', '%s-%%' % (supplier_ref))
             ])
 
+        IrConfigParameter = self.env['ir.config_parameter']
+        exists_parameter_number_digits = IrConfigParameter.search([
+            ('key', '=', 'product_sku_number_digits')
+            ])
+        if exists_parameter_number_digits:
+            number_digits = int(exists_parameter_number_digits[0].value)
+        else:
+            raise ValidationError(_(
+                'The system parameter product_sku_number_digits	does not exist'))
+
         if not products_supplier:
-            sequence = '000001'
+            sequence = '1'.zfill(number_digits)
         else:
             current_max_sequence = max(
                 products_supplier.mapped('default_code'))
-            sequence = str(int(current_max_sequence[-6:]) + 1).zfill(6)
+            sequence = str(int(
+                current_max_sequence[-number_digits:]) + 1) \
+                .zfill(number_digits)
 
         default_code = '%s-%s' % (supplier_ref, sequence)
         return default_code
